@@ -18,13 +18,21 @@ struct TabNavigationView: View {
                     Text("On Sale")
                 }
                 .tag(0)
-            
+
+            // Add the MessageView as a new tab
+            MessageView()
+                .tabItem {
+                    Image(systemName: "message.fill")
+                    Text("Messages")
+                }
+                .tag(1)
+
             MyAccountView()
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("My Account")
                 }
-                .tag(1)
+                .tag(2)
         }
     }
 }

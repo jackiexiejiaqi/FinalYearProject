@@ -75,7 +75,7 @@ struct OnSaleView: View {
         let db = Firestore.firestore()
         
         // Get the reference to the "products" collection
-        let productsRef = db.collection("products")
+        let productsRef = db.collection("products").whereField("status", isEqualTo: "available")
         
         // Query the data and map it to the "Product" struct
         productsRef.addSnapshotListener { querySnapshot, error in
@@ -92,7 +92,7 @@ struct OnSaleView: View {
                     itemDescription: data["description"] as? String ?? "",
                     price: data["price"] as? Double ?? 0.0,
                     imageUrl: data["imageUrl"] as? String ?? "",
-                    sellerId: data["userId"] as? String ?? "",
+                    sellerId: data["sellerId"] as? String ?? "",
                     buyerId: data["buyerId"] as? String
                 )
             }
@@ -109,9 +109,7 @@ struct OnSaleView: View {
                     .clipped()
                 Text(product.title)
                     .font(.headline)
-                Text(product.itemDescription)
-                    .font(.subheadline)
-                    .lineLimit(2)
+                    .foregroundColor(.black)
                 Text("£\(product.price, specifier: "%.2f")")
             }
             .padding()

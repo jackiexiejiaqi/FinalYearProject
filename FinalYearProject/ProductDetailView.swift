@@ -1,5 +1,5 @@
 //
-//  ItemDetailView.swift
+//  ProductDetailView.swift
 //  FinalYearProject
 //
 //  Created by Jiaqi Xie on 22/04/2023.
@@ -11,6 +11,15 @@ import FirebaseFirestore
 
 struct ProductDetailView: View {
     let product: Product
+    @State private var showChatView = false
+    @State private var showAlert = false
+    @State private var showPurchaseView = false
+    @State private var alertMessage = ""
+    
+    private var isCurrentUserSeller: Bool {
+        guard let currentUserId = Auth.auth().currentUser?.uid else { return false }
+        return currentUserId == product.sellerId
+    }
     
     var body: some View {
         ScrollView {
@@ -37,15 +46,24 @@ struct ProductDetailView: View {
                 
                 Spacer()
                 
-                purchaseButton
-                
+                HStack {
+                    purchaseButton
+                    messageButton
+                }
             }.padding()
         }
         .navigationBarTitle("Product Detail", displayMode: .inline)
     }
     
     private var purchaseButton: some View {
-        NavigationLink(destination: PurchaseView(isPresented: .constant(true), product: product)) {
+        Button(action: {
+            if isCurrentUserSeller {
+                alertMessage = "You cannot purchase your own product."
+                showAlert = true
+            } else {
+                showPurchaseView = true
+            }
+        }) {
             Text("Purchase")
                 .font(.headline)
                 .foregroundColor(.white)
@@ -54,42 +72,50 @@ struct ProductDetailView: View {
                 .background(Color.blue)
                 .cornerRadius(10)
         }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+        }
+        .sheet(isPresented: $showPurchaseView) {
+            PurchaseView(isPresented: $showPurchaseView, product: product)
+        }
     }
     
-    private func purchaseProduct() {
-        guard let currentUserId = Auth.auth().currentUser?.uid else {
-            print("Error: user not logged in")
-            return
-        }
-
-        let db = Firestore.firestore()
-        let productRef = db.collection("products").document(product.id)
-
-        db.runTransaction { transaction, errorPointer in
-            let productDocument: DocumentSnapshot
-            do {
-                try productDocument = transaction.getDocument(productRef)
-            } catch let fetchError as NSError {
-                errorPointer?.pointee = fetchError
-                return nil
-            }
-
-            // Perform the purchase transaction
-            // (e.g., process payment, update inventory, etc.)
-
-            // Update the buyerId field with the current user's ID
-            transaction.updateData(["buyerId": currentUserId], forDocument: productRef)
-            return nil
-        } completion: { _, error in
-            if let error = error {
-                print("Transaction failed: \(error)")
+    private var messageButton: some View {
+        Button(action: {
+            if isCurrentUserSeller {
+                alertMessage = "You cannot message yourself."
+                showAlert = true
+            } else if product.sellerId.isEmpty {
+                alertMessage = "Error: recipient ID is empty."
+                showAlert = true
             } else {
-                print("Transaction successfully committed!")
+                showChatView = true
+            }
+        }) {
+            Text("Message")
+                .font(.headline)
+                .foregroundColor(.white)
+                .padding()
+                .background(Color.green)
+                .cornerRadius(10)
+        }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+        }
+        .sheet(isPresented: $showChatView) {
+            NavigationView {
+                ChatView(recipientId: product.sellerId)
+                    .onAppear {
+                        if product.sellerId.isEmpty {
+                            alertMessage = "Error: recipient ID is empty."
+                            showAlert = true
+                        }
+                    }
             }
         }
     }
 }
-
+    
 struct ProductDetailView_Previews: PreviewProvider {
     static var previews: some View {
         ProductDetailView(product: Product(id: "1", title: "Sample Product", itemDescription: "This is a sample product description.", price: 19.99, imageUrl: "", sellerId: "sample_seller_id"))

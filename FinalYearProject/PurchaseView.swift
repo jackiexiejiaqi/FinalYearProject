@@ -12,7 +12,18 @@ struct PurchaseView: View {
     let product: Product
     
     @State private var location: String = ""
-    @State private var transactionDate: Date = Date()
+    @State private var transactionDate: Date = Date().addingTimeInterval(60 * 60) // Add one hour to the current time
+    @StateObject private var chatViewModel = ChatViewModel()
+
+    private func sendTransactionDetailsMessage() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM-dd-yyyy HH:mm"
+        let formattedDate = dateFormatter.string(from: transactionDate)
+        
+        let message = "Hello, I've confirmed the purchase of '\(product.title)'. Let's meet at '\(location)' on \(formattedDate) to complete the transaction."
+        
+        chatViewModel.sendMessageWithChatUpdate(to: product.sellerId, text: message)
+    }
     
     var body: some View {
         NavigationView {
@@ -36,6 +47,7 @@ struct PurchaseView: View {
                 Button(action: {
                     // Implement your purchase confirmation logic here
                     print("Purchase confirmed")
+                    sendTransactionDetailsMessage()
                     isPresented = false
                 }) {
                     Text("Confirm Purchase")
@@ -43,10 +55,11 @@ struct PurchaseView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.blue)
+                        .background(location.isEmpty ? Color.gray : Color.blue)
                         .cornerRadius(10)
                 }
                 .padding()
+                .disabled(location.isEmpty) // Disable the button if the location is empty
             }
             .navigationTitle("Purchase \(product.title)")
         }

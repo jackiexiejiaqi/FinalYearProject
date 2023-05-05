@@ -80,8 +80,10 @@ struct ListProductView: View {
                 "description": self.productDescription,
                 "imageUrl": imageUrl,
                 "category": category,
-                "userId": userId,
-                "timestamp": Timestamp()
+                "sellerId": userId,
+                "timestamp": Timestamp(),
+                "status": "available",
+                "buyerId": ""
             ]
 
             let db = Firestore.firestore()
@@ -100,7 +102,7 @@ struct ListProductView: View {
     }
 
     private func uploadProductImage(image: UIImage, completion: @escaping (String?) -> Void) {
-        guard let userId = Auth.auth().currentUser?.uid else {
+        guard (Auth.auth().currentUser?.uid) != nil else {
             print("User not logged in")
             completion(nil)
             return

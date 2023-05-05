@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		8C1BFC3029F4799800CC6EC8 /* PurchaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1BFC2F29F4799800CC6EC8 /* PurchaseView.swift */; };
+		8C1BFC3229F6094200CC6EC8 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1BFC3129F6094200CC6EC8 /* MessageView.swift */; };
+		8C1BFC3429F60DCC00CC6EC8 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1BFC3329F60DCC00CC6EC8 /* ChatView.swift */; };
+		8C1BFC3629F612A500CC6EC8 /* ChatBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1BFC3529F612A500CC6EC8 /* ChatBoxView.swift */; };
 		8C620F7C29E23AA10052AB84 /* ProductDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C620F7B29E23AA10052AB84 /* ProductDetailView.swift */; };
 		8C620F7E29E23C8B0052AB84 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C620F7D29E23C8B0052AB84 /* LoginView.swift */; };
 		8C620F8029E23CA00052AB84 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C620F7F29E23CA00052AB84 /* SignUpView.swift */; };
@@ -55,6 +58,9 @@
 
 /* Begin PBXFileReference section */
 		8C1BFC2F29F4799800CC6EC8 /* PurchaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseView.swift; sourceTree = "<group>"; };
+		8C1BFC3129F6094200CC6EC8 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
+		8C1BFC3329F60DCC00CC6EC8 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		8C1BFC3529F612A500CC6EC8 /* ChatBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBoxView.swift; sourceTree = "<group>"; };
 		8C620F7B29E23AA10052AB84 /* ProductDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailView.swift; sourceTree = "<group>"; };
 		8C620F7D29E23C8B0052AB84 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		8C620F7F29E23CA00052AB84 /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
@@ -146,12 +152,15 @@
 				8C9C099829E1E3480036FA54 /* ContentView.swift */,
 				8C9C099629E1E3480036FA54 /* FinalYearProjectApp.swift */,
 				8C620F9529F2C7780052AB84 /* ImagePicker.swift */,
+				8C1BFC3529F612A500CC6EC8 /* ChatBoxView.swift */,
 				8C620F7B29E23AA10052AB84 /* ProductDetailView.swift */,
 				8C620F8D29F2BE040052AB84 /* ListProductView.swift */,
 				8C620F7D29E23C8B0052AB84 /* LoginView.swift */,
 				8C9C09CB29E1E7FC0036FA54 /* MyAccountView.swift */,
+				8C1BFC3329F60DCC00CC6EC8 /* ChatView.swift */,
 				8C9C09C929E1E7E60036FA54 /* OnSaleView.swift */,
 				8C1BFC2F29F4799800CC6EC8 /* PurchaseView.swift */,
+				8C1BFC3129F6094200CC6EC8 /* MessageView.swift */,
 				8C9C099F29E1E34A0036FA54 /* Persistence.swift */,
 				8C620F8F29F2BE150052AB84 /* PurchasedProductsView.swift */,
 				8C9C09CF29E22E970036FA54 /* SearchBar.swift */,
@@ -335,7 +344,9 @@
 				8C620F8E29F2BE040052AB84 /* ListProductView.swift in Sources */,
 				8C9C09A029E1E34A0036FA54 /* Persistence.swift in Sources */,
 				8C1BFC3029F4799800CC6EC8 /* PurchaseView.swift in Sources */,
+				8C1BFC3429F60DCC00CC6EC8 /* ChatView.swift in Sources */,
 				8C9C099929E1E3480036FA54 /* ContentView.swift in Sources */,
+				8C1BFC3229F6094200CC6EC8 /* MessageView.swift in Sources */,
 				8C9C099729E1E3480036FA54 /* FinalYearProjectApp.swift in Sources */,
 				8C620F7C29E23AA10052AB84 /* ProductDetailView.swift in Sources */,
 				8C9C09CE29E1E83F0036FA54 /* TabNavigationView.swift in Sources */,
@@ -346,6 +357,7 @@
 				8C9C09CC29E1E7FC0036FA54 /* MyAccountView.swift in Sources */,
 				8C620F9629F2C7780052AB84 /* ImagePicker.swift in Sources */,
 				8C620F7E29E23C8B0052AB84 /* LoginView.swift in Sources */,
+				8C1BFC3629F612A500CC6EC8 /* ChatBoxView.swift in Sources */,
 				8C9C09A329E1E34A0036FA54 /* FinalYearProject.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
