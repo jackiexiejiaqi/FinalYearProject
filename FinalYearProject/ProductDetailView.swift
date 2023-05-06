@@ -118,6 +118,6 @@ struct ProductDetailView: View {
     
 struct ProductDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        ProductDetailView(product: Product(id: "1", title: "Sample Product", itemDescription: "This is a sample product description.", price: 19.99, imageUrl: "", sellerId: "sample_seller_id"))
+        ProductDetailView(product: Product(id: "1", title: "Sample Product", itemDescription: "This is a sample product description.", price: 19.99, imageUrl: "", sellerId: "sample_seller_id", category: "All"))
     }
 }

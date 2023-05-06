@@ -60,21 +60,62 @@ struct Product: Identifiable {
     var imageUrl: String
     var sellerId: String
     var buyerId: String?
+    var category: String
 }
 
 
 struct OnSaleView: View {
     @State private var products: [Product] = []
     @State private var searchText: String = ""
+    @State private var isSortPickerShown = false
+    @State private var isFilterPickerShown = false
+    @State private var selectedSortOption: SortOption = .default
+    @State private var selectedFilterOption: FilterOption = .all
 
-    private var filteredProducts: [Product] {
-        if searchText.isEmpty {
-            return products
-        } else {
-            return products.filter { product in
-                product.title.lowercased().contains(searchText.lowercased())
-            }
+    enum SortOption: String, CaseIterable, Identifiable {
+        case `default`
+        case priceLowToHigh
+        case priceHighToLow
+
+        var id: String { self.rawValue }
+    }
+
+    enum FilterOption: String, CaseIterable, Identifiable {
+        case all
+        case electronics = "Electronics"
+        case clothing = "Clothing"
+        case homeAndKitchen = "Home & Kitchen"
+        case books = "Books"
+        case toysAndGames = "Toys & Games"
+        case sportsAndOutdoors = "Sports & Outdoors"
+        case beautyAndPersonalCare = "Beauty & Personal Care"
+        case automotive = "Automotive"
+        case healthAndWellness = "Health & Wellness"
+        case other = "Other"
+
+        var id: String { self.rawValue }
+    }
+
+    private var displayedProducts: [Product] {
+        var result: [Product] = searchText.isEmpty ? products : products.filter { $0.title.lowercased().contains(searchText.lowercased()) }
+
+        switch selectedFilterOption {
+        case .all:
+            break
+        default:
+            result = result.filter { $0.category.lowercased() == selectedFilterOption.rawValue.lowercased() }
         }
+
+        switch selectedSortOption {
+        case .priceLowToHigh:
+            result.sort { $0.price < $1.price }
+        case .priceHighToLow:
+            result.sort { $0.price > $1.price }
+        case .default:
+            break
+        }
+
+        return result
     }
     
     let gridLayout = [
@@ -84,18 +125,15 @@ struct OnSaleView: View {
 
     private func fetchData() {
         let db = Firestore.firestore()
-        
-        // Get the reference to the "products" collection
         let productsRef = db.collection("products").whereField("status", isEqualTo: "available")
-        
-        // Query the data and map it to the "Product" struct
+
         productsRef.addSnapshotListener { querySnapshot, error in
             guard let documents = querySnapshot?.documents else {
                 print("Error fetching documents: \(error!)")
                 return
             }
-            
-            products = documents.map { document in
+
+            products = documents.map { document -> Product in
                 let data = document.data()
                 return Product(
                     id: document.documentID,
@@ -104,7 +142,8 @@ struct OnSaleView: View {
                     price: data["price"] as? Double ?? 0.0,
                     imageUrl: data["imageUrl"] as? String ?? "",
                     sellerId: data["sellerId"] as? String ?? "",
-                    buyerId: data["buyerId"] as? String
+                    buyerId: data["buyerId"] as? String,
+                    category: data["category"] as? String ?? ""
                 )
             }
         }
@@ -134,10 +173,78 @@ struct OnSaleView: View {
         NavigationView {
             VStack {
                 SearchBar(text: $searchText)
+                    .padding(.horizontal, 11)
+                    
 
+                HStack {
+                    Button(action: {
+                        isSortPickerShown.toggle()
+                    }) {
+                        HStack {
+                            Text("Sort")
+                            Image(systemName: "arrow.up.arrow.down.circle")
+                        }
+                        .padding(.horizontal, 55)
+                        .padding(.vertical, 8)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                    }
+                    .sheet(isPresented: $isSortPickerShown) {
+                        VStack {
+                            Text("Sort Options")
+                                .font(.title)
+                                .padding()
+                            ForEach(SortOption.allCases) { option in
+                                Button(action: {
+                                    selectedSortOption = option
+                                    isSortPickerShown = false
+                                }) {
+                                    Text(option.rawValue.capitalized)
+                                        .padding()
+                                        .foregroundColor(selectedSortOption == option ? .blue : .black)
+                                }
+                            }
+                        }
+                    }
+
+
+                    Button(action: {
+                        isFilterPickerShown.toggle()
+                    }) {
+                        HStack {
+                            Text("Filter")
+                            Image(systemName: "line.horizontal.3.decrease.circle")
+                        }
+                        .padding(.horizontal, 55)
+                        .padding(.vertical, 8)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                    }
+                    .sheet(isPresented: $isFilterPickerShown) {
+                        VStack {
+                            Text("Filter Options")
+                                .font(.title)
+                                .padding()
+                            ForEach(FilterOption.allCases) { option in
+                                Button(action: {
+                                    selectedFilterOption = option
+                                    isFilterPickerShown = false
+                                }) {
+                                    Text(option.rawValue.capitalized)
+                                        .padding()
+                                        .foregroundColor(selectedFilterOption == option ? .blue : .black)
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                
                 ScrollView {
                     LazyVGrid(columns: gridLayout, spacing: 10) {
-                        ForEach(filteredProducts) { product in
+                        ForEach(displayedProducts) { product in
                             productCard(for: product)
                         }
                     }
@@ -149,6 +256,17 @@ struct OnSaleView: View {
                 fetchData()
             }
         }
+    }
+}
+
+struct CustomButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding()
+            .background(Color(.systemBlue))
+            .foregroundColor(.white)
+            .cornerRadius(10)
+            .shadow(color: .gray.opacity(0.2), radius: 5, x: 0, y: 2)
     }
 }
 
