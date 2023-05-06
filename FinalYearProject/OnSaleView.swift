@@ -65,7 +65,18 @@ struct Product: Identifiable {
 
 struct OnSaleView: View {
     @State private var products: [Product] = []
+    @State private var searchText: String = ""
 
+    private var filteredProducts: [Product] {
+        if searchText.isEmpty {
+            return products
+        } else {
+            return products.filter { product in
+                product.title.lowercased().contains(searchText.lowercased())
+            }
+        }
+    }
+    
     let gridLayout = [
         GridItem(.flexible(minimum: 150, maximum: 200), spacing: 10),
         GridItem(.flexible(minimum: 150, maximum: 200), spacing: 10)
@@ -121,13 +132,17 @@ struct OnSaleView: View {
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                LazyVGrid(columns: gridLayout, spacing: 10) {
-                    ForEach(products) { product in
-                        productCard(for: product)
+            VStack {
+                SearchBar(text: $searchText)
+
+                ScrollView {
+                    LazyVGrid(columns: gridLayout, spacing: 10) {
+                        ForEach(filteredProducts) { product in
+                            productCard(for: product)
+                        }
                     }
+                    .padding(10)
                 }
-                .padding(10)
             }
             .navigationTitle("On Sale")
             .onAppear {
