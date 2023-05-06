@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
 struct PurchaseView: View {
     @Binding var isPresented: Bool
@@ -23,6 +24,21 @@ struct PurchaseView: View {
         let message = "Hello, I've confirmed the purchase of '\(product.title)'. Let's meet at '\(location)' on \(formattedDate) to complete the transaction."
         
         chatViewModel.sendMessageWithChatUpdate(to: product.sellerId, text: message)
+    }
+    
+    private func updateProductStatus() {
+        let db = Firestore.firestore()
+        let productRef = db.collection("products").document(product.id)
+        
+        productRef.updateData([
+            "status": "unavailable"
+        ]) { error in
+            if let error = error {
+                print("Error updating product status: \(error)")
+            } else {
+                print("Product status updated successfully")
+            }
+        }
     }
     
     var body: some View {
@@ -45,9 +61,9 @@ struct PurchaseView: View {
                     .padding()
                 
                 Button(action: {
-                    // Implement your purchase confirmation logic here
                     print("Purchase confirmed")
                     sendTransactionDetailsMessage()
+                    updateProductStatus()
                     isPresented = false
                 }) {
                     Text("Confirm Purchase")

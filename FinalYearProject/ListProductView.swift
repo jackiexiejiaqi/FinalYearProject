@@ -102,43 +102,42 @@ struct ListProductView: View {
     }
 
     private func uploadProductImage(image: UIImage, completion: @escaping (String?) -> Void) {
-        guard (Auth.auth().currentUser?.uid) != nil else {
-            print("User not logged in")
-            completion(nil)
-            return
-        }
-
-        guard let imageData = image.jpegData(compressionQuality: 0.5) else {
-            print("Failed to convert image to JPEG data")
-            completion(nil)
-            return
-        }
-
-        let imageId = UUID().uuidString
-        let storageRef = Storage.storage().reference().child("product_images/\(imageId).jpg")
-
-        storageRef.putData(imageData, metadata: nil) { metadata, error in
-            if let error = error {
-                print("Error uploading image: \(error.localizedDescription)")
+        if Auth.auth().currentUser?.uid != nil {
+            guard let imageData = image.jpegData(compressionQuality: 0.5) else {
+                print("Failed to convert image to JPEG data")
                 completion(nil)
                 return
             }
 
-            storageRef.downloadURL { url, error in
+            let imageId = UUID().uuidString
+            let storageRef = Storage.storage().reference().child("product_images/\(imageId).jpg")
+
+            storageRef.putData(imageData, metadata: nil) { metadata, error in
                 if let error = error {
-                    print("Error getting image download URL: \(error.localizedDescription)")
+                    print("Error uploading image: \(error.localizedDescription)")
                     completion(nil)
                     return
                 }
 
-                guard let imageUrl = url?.absoluteString else {
-                    print("Failed to get image download URL")
-                    completion(nil)
-                    return
-                }
+                storageRef.downloadURL { url, error in
+                    if let error = error {
+                        print("Error getting image download URL: \(error.localizedDescription)")
+                        completion(nil)
+                        return
+                    }
 
-                completion(imageUrl)
+                    guard let imageUrl = url?.absoluteString else {
+                        print("Failed to get image download URL")
+                        completion(nil)
+                        return
+                    }
+
+                    completion(imageUrl)
+                }
             }
+        } else {
+            print("User not logged in")
+            completion(nil)
         }
     }
 
