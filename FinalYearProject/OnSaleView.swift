@@ -61,6 +61,7 @@ struct Product: Identifiable {
     var sellerId: String
     var buyerId: String?
     var category: String
+    var status: String?
 }
 
 
